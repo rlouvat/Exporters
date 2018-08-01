@@ -1,5 +1,6 @@
 ﻿using Autodesk.Maya.OpenMaya;
 using Maya2Babylon.Forms;
+using Maya2Babylon.Importer.Forms;
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
@@ -7,6 +8,7 @@ using System.Windows.Forms;
 [assembly: MPxCommandClass(typeof(Maya2Babylon.toBabylon), "toBabylon")]
 [assembly: ExtensionPlugin(typeof(Maya2Babylon.MayaPlugin), "Any")]
 [assembly: MPxCommandClass(typeof(Maya2Babylon.AnimationGroups), "AnimationGroups")]
+[assembly: MPxCommandClass(typeof(Maya2Babylon.GltfImporter), "GltfImporter")]
 
 namespace Maya2Babylon
 {
@@ -24,6 +26,7 @@ namespace Maya2Babylon
             // Add item to this menu
             MGlobal.executeCommand($@"menuItem - label ""Babylon File Exporter..."" - command ""toBabylon"";");
             MGlobal.executeCommand($@"menuItem - label ""Animation groups"" - command ""AnimationGroups"";");
+            MGlobal.executeCommand($@"menuItem - label ""Import glTF file"" - command ""GltfImporter"";");
 
             MGlobal.displayInfo("Babylon plug-in initialized");
             return true;
@@ -103,6 +106,32 @@ namespace Maya2Babylon
         private void On_animationFormClosed()
         {
             animationForm = null;
+        }
+    }
+
+    /// <summary>
+    /// For the glTF importer
+    /// </summary>
+    public class GltfImporter : MPxCommand, IMPxCommand
+    {
+        private static ImporterForm importerForm = null;
+
+        public override void doIt(MArgList args)
+        {
+            if (importerForm == null)
+            {
+                importerForm = new ImporterForm();
+                importerForm.On_importerFormClosed += On_importerFormClosed;
+            }
+
+            importerForm.Show();
+            importerForm.BringToFront();
+            importerForm.WindowState = FormWindowState.Normal;
+        }
+
+        private void On_importerFormClosed()
+        {
+            importerForm = null;
         }
     }
 }

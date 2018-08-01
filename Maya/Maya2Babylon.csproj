@@ -118,6 +118,13 @@
     <Compile Include="Forms\AnimationGroupControl.Designer.cs">
       <DependentUpon>AnimationGroupControl.cs</DependentUpon>
     </Compile>
+    <Compile Include="Importer\Forms\ImporterForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Importer\Forms\ImporterForm.Designer.cs">
+      <DependentUpon>ImporterForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Importer\BabylonImporter.cs" />
     <Compile Include="Loader.cs" />
     <Compile Include="MayaPlugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -146,6 +153,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\ExporterForm.resx">
       <DependentUpon>ExporterForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Importer\Forms\ImporterForm.resx">
+      <DependentUpon>ImporterForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
