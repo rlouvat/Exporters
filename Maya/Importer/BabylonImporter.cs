@@ -79,12 +79,26 @@ namespace Maya2Babylon.Importer
 
                     break;
                 case ".glb":
-                    using (BinaryReader reader = new BinaryReader(File.Open(file, FileMode.Open)))
+                    using (BinaryReader b = new BinaryReader(File.Open(file, FileMode.Open)))
                     {
-                        //string json = reader.ReadString();
-                        //MGlobal.displayInfo($"json: {json}");
+                        int lengthStream = (int)b.BaseStream.Length;
 
-                        //gltf = JsonConvert.DeserializeObject<GLTF>(json);
+                        // TODO check those parameters
+                        var magic = b.ReadUInt32();
+                        var version = b.ReadUInt32();
+                        var length = b.ReadUInt32();
+                        var chunkLengthJson = b.ReadUInt32();
+                        var chunkTypeJson = b.ReadUInt32();
+
+                        byte[] chunkDataJson = b.ReadBytes((int)chunkLengthJson);
+                        string json = Encoding.ASCII.GetString(chunkDataJson);
+                        gltf = JsonConvert.DeserializeObject<GLTF>(json);
+
+                        // read buffer
+                        // uint32 chunkLength
+                        // uint32 chunkType
+                        // ubyte[] chunkData
+
                     }
                     break;
                 default:
@@ -95,5 +109,37 @@ namespace Maya2Babylon.Importer
 
             return gltf;
         }
+
+
+        public IList<object> ReadAccessor(GLTFAccessor accessor, GLTFBufferView bufferView, byte[] chunkData)
+        {
+            IList<object> result = null;
+
+            int offset = bufferView.byteOffset + accessor.byteOffset;
+            int count = accessor.count;
+
+            switch (accessor.componentType)
+            {
+                case GLTFAccessor.ComponentType.BYTE:
+                    result = new List<byte>();
+                    for (int i = offset; i < count; i++)
+                    {
+                        result.Add(chunkData[i]);
+                    }
+                    break;
+                case GLTFAccessor.ComponentType.UNSIGNED_SHORT:
+                    IList<ushort> us = new List<ushort>();
+                    for (int i = offset; i < count; i++)
+                    {
+                        us.Add(BitConverter.ToUInt16(chunkData, i * 2));
+                    }
+                    break;
+                default:
+                    throw new Exception();
+            }
+            
+            return result;
+        }
+
     }
 }
